@@ -190,8 +190,9 @@ export default function App() {
     const cleanPhone = phoneInput.replace(/\s+/g, '')
 
     try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
       // 1. Real Backend serverni tekshirish
-      await fetch('http://localhost:5000/api/auth/verify-otp', {
+      await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: cleanPhone, code: '000000' })
@@ -223,8 +224,9 @@ export default function App() {
     const cleanPhone = phoneInput.replace(/\s+/g, '')
 
     try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
       // 1. Real API orqali tekshirish
-      const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+      const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: cleanPhone, code: otpInput })
