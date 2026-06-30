@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  phone          String          @unique
+  firstName      String?
+  lastName       String?
+  avatarUrl      String?
+  language       String          @default("uz") // uz, en, ru
+  theme          String          @default("dark")
+  currency       String          @default("UZS")
+  financialScore Int             @default(50)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  transactions   Transaction[]
+  budgets        Budget[]
+  goals          Goal[]
+  categories     Category[]
+  receipts       Receipt[]
+  subscriptions  Subscription[]
+  notifications  Notification[]
+  conversations  Conversation[]
+  reports        Report[]
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  code      String
+  firstName String?
+  lastName  String?
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String        @id @default(uuid())
+  name      String
+  type      String        // "INCOME", "EXPENSE", "TRANSFER"
+  icon      String?
+  color     String?
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+model Transaction {
+  id          String        @id @default(uuid())
+  amount      Float
+  type        String        // "INCOME", "EXPENSE", "TRANSFER"
+  date        DateTime      @default(now())
+  description String?
+  
+  categoryId  String
+  category    Category      @relation(fields: [categoryId], references: [id])
+  
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  receiptId   String?       @unique
+  receipt     Receipt?      @relation(fields: [receiptId], references: [id])
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Budget {
+  id          String    @id @default(uuid())
+  amount      Float
+  month       Int
+  year        Int
+  
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Goal {
+  id             String    @id @default(uuid())
+  name           String
+  targetAmount   Float
+  currentAmount  Float     @default(0)
+  deadline       DateTime?
+  icon           String?
+  
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Receipt {
+  id          String    @id @default(uuid())
+  imageUrl    String
+  merchant    String?
+  totalAmount Float?
+  extractedData String? // JSON string
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transaction Transaction?
+  
+  createdAt   DateTime  @default(now())
+}
+
+model Subscription {
+  id          String    @id @default(uuid())
+  name        String
+  amount      Float
+  frequency   String    // "DAILY", "WEEKLY", "MONTHLY", "YEARLY"
+  nextBilling DateTime
+  icon        String?
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  title     String
+  message   String
+  type      String    // "ALERT", "REMINDER", "INFO", "SYSTEM"
+  isRead    Boolean   @default(false)
+  
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime  @default(now())
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  title     String?
+  
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  content        String
+  role           String       // "USER", "ASSISTANT"
+  
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime     @default(now())
+}
+
+model Report {
+  id        String    @id @default(uuid())
+  title     String
+  content   String    // JSON string
+  month     Int
+  year      Int
+  
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime  @default(now())
+}
