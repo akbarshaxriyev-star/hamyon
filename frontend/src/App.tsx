@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Wallet, TrendingUp, TrendingDown, History, Download, Home, User, BarChart2, X, Settings, LogOut, PlusCircle, Loader2, Send, ShieldCheck, MessageSquare } from 'lucide-react'
-import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { TrendingUp, TrendingDown, History, Download, Home, User, BarChart2, X, Settings, LogOut, PlusCircle, Loader2, Send, ShieldCheck, MessageSquare } from 'lucide-react'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import html2canvas from 'html2canvas'
 
 export default function App() {
@@ -153,21 +153,7 @@ export default function App() {
     setTitle('')
   }
 
-  // Tahlil sahifasi uchun ma'lumotlarni shakllantirish
-  const getChartData = () => {
-    if (transactions.length === 0) return []
-    const dates = Array.from(new Set(transactions.map(t => t.date))).sort()
-    return dates.map(d => {
-      const dayTransactions = transactions.filter(t => t.date === d)
-      const inc = dayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0)
-      const exp = dayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-      return {
-        sana: d.substring(5),
-        Kirim: inc,
-        Chiqim: exp
-      }
-    })
-  }
+
 
   // Kategoriyalar bo'yicha taqsimot
   const getCategoryData = () => {
@@ -290,7 +276,7 @@ export default function App() {
   const [amount, setAmount] = useState('')
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('Oziq-ovqat')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [date] = useState(new Date().toISOString().split('T')[0])
 
   // 1. Splash Screen
   if (isStartupLoading) {
@@ -566,12 +552,12 @@ export default function App() {
                                   dataKey="value"
                                   stroke="none"
                                 >
-                                  {getCategoryData().map((entry, index) => (
+                                  {getCategoryData().map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                   ))}
                                 </Pie>
                                 <Tooltip 
-                                  formatter={(value: number) => formatCurrency(value)}
+                                  formatter={(value: any) => formatCurrency(Number(value))}
                                   contentStyle={{ 
                                     backgroundColor: 'rgba(15, 23, 42, 0.9)', 
                                     border: '1px solid rgba(255,255,255,0.1)', 
