@@ -176,7 +176,7 @@ export default function App() {
     const cleanPhone = phoneInput.replace(/\s+/g, '')
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const API_URL = import.meta.env.VITE_API_URL || ''
       // 1. Real Backend serverni tekshirish
       await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: 'POST',
@@ -210,7 +210,7 @@ export default function App() {
     const cleanPhone = phoneInput.replace(/\s+/g, '')
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const API_URL = import.meta.env.VITE_API_URL || ''
       // 1. Real API orqali tekshirish
       const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: 'POST',

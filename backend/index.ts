@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import https from 'https'
+import path from 'path'
 
 dotenv.config()
 const prisma = new PrismaClient()
@@ -14,9 +15,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('HAMYON Backend is running!')
-})
+
 
 // Auth: OTP tasdiqlash va saytga kirish
 app.post('/api/auth/verify-otp', async (req, res) => {
@@ -67,6 +66,13 @@ app.post('/api/auth/verify-otp', async (req, res) => {
     console.error("Xatolik verify-otp:", error)
     return res.status(500).json({ error: "Ichki server xatoligi yuz berdi" })
   }
+})
+
+// Frontend Static fayllarni ulash
+app.use(express.static(path.join(__dirname, '../../frontend/dist')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'))
 })
 
 // Express Serverni ishga tushirish
