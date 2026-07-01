@@ -173,7 +173,10 @@ export default function App() {
     e.preventDefault()
     if (!phoneInput) return
 
-    const cleanPhone = phoneInput.replace(/\s+/g, '')
+    let cleanPhone = phoneInput.replace(/\s+/g, '')
+    if (!cleanPhone.startsWith('+998')) {
+      cleanPhone = '+998' + cleanPhone.replace(/^998/, '')
+    }
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || ''
@@ -207,7 +210,10 @@ export default function App() {
   // OTP kodini tasdiqlash
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
-    const cleanPhone = phoneInput.replace(/\s+/g, '')
+    let cleanPhone = phoneInput.replace(/\s+/g, '')
+    if (!cleanPhone.startsWith('+998')) {
+      cleanPhone = '+998' + cleanPhone.replace(/^998/, '')
+    }
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || ''
@@ -342,14 +348,17 @@ export default function App() {
 
               <div>
                 <label className="text-xs text-gray-400 mb-1.5 block">Telefon raqamingiz</label>
-                <input 
-                  type="tel" 
-                  required
-                  placeholder="+998901234567"
-                  value={phoneInput}
-                  onChange={(e) => setPhoneInput(e.target.value)}
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500 focus:bg-black/40 transition-colors"
-                />
+                <div className="flex bg-black/20 border border-white/10 rounded-xl px-4 py-3 focus-within:border-emerald-500 focus-within:bg-black/40 transition-colors">
+                  <span className="text-gray-400 mr-2 font-medium flex items-center">+998</span>
+                  <input 
+                    type="tel" 
+                    required
+                    placeholder="90 123 45 67"
+                    value={phoneInput}
+                    onChange={(e) => setPhoneInput(e.target.value)}
+                    className="w-full bg-transparent text-sm text-white outline-none"
+                  />
+                </div>
               </div>
 
               <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
