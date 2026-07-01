@@ -14,6 +14,10 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+app.get('/', (req, res) => {
+  res.send('HAMYON Backend is running!')
+})
+
 // Auth: OTP tasdiqlash va saytga kirish
 app.post('/api/auth/verify-otp', async (req, res) => {
   const { phone, code } = req.body
